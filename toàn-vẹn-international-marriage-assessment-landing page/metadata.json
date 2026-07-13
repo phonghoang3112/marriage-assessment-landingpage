@@ -1,0 +1,6 @@
+{
+  "name": "Toàn Vẹn International",
+  "description": "Chương trình đánh giá hôn nhân chuyên sâu giúp bạn tìm thấy sự rõ ràng trước những quyết định lớn lao.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
