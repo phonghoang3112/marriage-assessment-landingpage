@@ -9,15 +9,55 @@ import {
   X, 
   Mail, 
   Facebook,
-  ArrowRight,
   ShieldAlert,
-  ChevronRight,
-  Sparkles
+  Home,
+  Languages,
+  HeartCrack
 } from "lucide-react";
+import { translations } from "./translations";
+
+function FamilyIcon({ className }: { className?: string }) {
+  return (
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Left person (Adult) */}
+      <circle cx="6.5" cy="8" r="2" />
+      <path d="M3.5 15.5c0-1.5 1.5-2.5 3-2.5s3 1 3 2.5V17H3.5v-1.5z" />
+      
+      {/* Right person (Adult) */}
+      <circle cx="17.5" cy="8" r="2" />
+      <path d="M14.5 15.5c0-1.5 1.5-2.5 3-2.5s3 1 3 2.5V17h-6v-1.5z" />
+      
+      {/* Middle person (Child) */}
+      <circle cx="12" cy="11.5" r="1.3" />
+      <path d="M10 16.5c0-1 1-1.5 2-1.5s2 .5 2 1.5V17h-4v-.5z" />
+    </svg>
+  );
+}
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [lang, setLang] = useState<"vi" | "en">(() => {
+    const saved = localStorage.getItem("lang");
+    return (saved === "en" || saved === "vi") ? saved : "vi";
+  });
+
+  const toggleLang = () => {
+    const nextLang = lang === "vi" ? "en" : "vi";
+    setLang(nextLang);
+    localStorage.setItem("lang", nextLang);
+  };
+
+  const t = translations[lang];
 
   // Scroll effect to add glassmorphism to top bar
   useEffect(() => {
@@ -32,126 +72,156 @@ export default function App() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Load Fillout embed script
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://server.fillout.com/embed/v1/";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
   return (
     <div className="bg-background text-on-surface font-sans overflow-x-hidden min-h-screen selection:bg-secondary/20 selection:text-secondary">
       
       {/* TopAppBar */}
       <header className={`fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300 ${scrolled ? "glass-header shadow-sm" : "bg-transparent"}`} id="main-header">
         <div className="flex justify-between items-center w-full px-6 max-w-[1140px] mx-auto">
-          <a className="flex items-center gap-2" href="#">
+          <a className="flex items-center gap-2.5" href="https://toanven.vn" target="_blank" rel="noopener noreferrer">
             <img 
               alt="Toàn Vẹn Logo" 
-              className="h-8 w-8" 
+              className="h-8 w-8 shrink-0" 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8ONz_RmmG8l634XfhMFQSXfW_xmR4HNUzN8O6n9E1fgA8seSXOqpawqphvv3759GrxUEPnr-wJPgnbjKrVu8Ww_WxcPJOetRnlE-BR_Z8e3lyzA66XncE7th_slcJMxrHH4bewEwXeuI5UtQXgTTx-jMaWyDs97tDR4qsZGc8gWMCqghKdfvzS2mXjJ7MfZr8yo41oOwHUVRL3NrGuadRYcWNEQjmmSes1-AdidVYweRVtuFFWtZC-mcPbdzuzt-X1QyVQA3rFBQ" 
               style={{ backgroundColor: "transparent" }}
               referrerPolicy="no-referrer"
             />
-            <span className="font-sans text-xl md:text-2xl text-primary">
-              <span className="font-bold">Toàn Vẹn</span> International
-            </span>
+            <div className="flex flex-col text-left leading-tight">
+              <span className="font-sans text-lg md:text-xl text-primary font-bold">
+                Toàn Vẹn <span className="font-normal">International</span>
+              </span>
+              <span className="font-sans text-[8px] md:text-[9px] text-on-surface-variant/80 tracking-wide">
+                <span className="block md:inline">Save Your Marriage Assessment |</span>{" "}
+                <span className="block md:inline">Đánh giá Hôn Nhân</span>
+              </span>
+            </div>
           </a>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <a className="font-sans text-sm font-semibold text-on-surface-variant hover:text-emotional-accent transition-colors" href="#quy-trinh">Quy trình</a>
-            <a className="font-sans text-sm font-semibold text-on-surface-variant hover:text-emotional-accent transition-colors" href="#chuyen-gia">Chuyên gia</a>
-            <a className="font-sans text-sm font-semibold text-on-surface-variant hover:text-emotional-accent transition-colors" href="#so-sanh">Sự khác biệt</a>
-            <a className="vibrant-btn px-6 py-2.5 rounded-full text-[12px] tracking-widest text-center" href="#dang-ky">ĐĂNG KÝ NGAY</a>
+          <nav className="hidden md:flex items-center gap-6">
+            <a className="font-sans text-sm font-semibold text-on-surface-variant hover:text-emotional-accent transition-colors" href="#quy-trinh">{t.header.process}</a>
+            <a className="font-sans text-sm font-semibold text-on-surface-variant hover:text-emotional-accent transition-colors" href="#chuyen-gia">{t.header.experts}</a>
+            <a className="font-sans text-sm font-semibold text-on-surface-variant hover:text-emotional-accent transition-colors" href="#so-sanh">{t.header.difference}</a>
+            
+            {/* Language Toggle */}
+            <button 
+              onClick={toggleLang}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-outline-variant/30 text-xs font-semibold text-on-surface-variant hover:border-emotional-accent hover:text-emotional-accent transition-all cursor-pointer bg-white/50"
+              title={lang === "vi" ? "Switch to English" : "Chuyển sang tiếng Việt"}
+            >
+              <Languages className="w-4 h-4 text-emotional-accent" />
+              <span>{lang === "vi" ? "EN" : "VI"}</span>
+            </button>
+
+            <a className="vibrant-btn px-6 py-2.5 rounded-full text-[12px] tracking-widest text-center" href="https://toitoanven.fillout.com/assessment" target="_blank" rel="noopener noreferrer">{t.header.registerNow}</a>
           </nav>
 
-          {/* Mobile Toggle */}
-          <button className="md:hidden text-primary p-2" onClick={() => setMobileMenuOpen(true)} id="menu-toggle">
-            <Menu className="w-8 h-8" />
-          </button>
+          {/* Mobile Actions */}
+          <div className="flex items-center gap-3 md:hidden">
+            <button 
+              onClick={toggleLang}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full border border-outline-variant/30 text-xs font-semibold text-on-surface-variant bg-white/50"
+            >
+              <Languages className="w-3.5 h-3.5 text-emotional-accent" />
+              <span>{lang === "vi" ? "EN" : "VI"}</span>
+            </button>
+            <button className="text-primary p-2" onClick={() => setMobileMenuOpen(true)} id="menu-toggle">
+              <Menu className="w-8 h-8" />
+            </button>
+          </div>
         </div>
 
         {/* Mobile Drawer */}
         {mobileMenuOpen && (
           <div className="fixed inset-0 bg-background z-[60] md:hidden flex flex-col p-8 space-y-8" id="mobile-menu">
             <div className="flex justify-between items-center">
-              <span className="font-serif text-2xl font-semibold text-primary">Menu</span>
+              <span className="font-serif text-2xl font-semibold text-primary">{t.header.menu}</span>
               <button className="text-primary" onClick={() => setMobileMenuOpen(false)} id="menu-close">
                 <X className="w-8 h-8" />
               </button>
             </div>
             <nav className="flex flex-col space-y-6">
-              <a className="mobile-nav-link text-2xl font-serif text-text-deep" href="#quy-trinh" onClick={() => setMobileMenuOpen(false)}>Quy trình</a>
-              <a className="mobile-nav-link text-2xl font-serif text-text-deep" href="#chuyen-gia" onClick={() => setMobileMenuOpen(false)}>Chuyên gia</a>
-              <a className="mobile-nav-link text-2xl font-serif text-text-deep" href="#so-sanh" onClick={() => setMobileMenuOpen(false)}>Sự khác biệt</a>
-              <a className="mobile-nav-link vibrant-btn w-full py-4 text-center rounded-lg mt-4 text-[14px] tracking-widest" href="#dang-ky" onClick={() => setMobileMenuOpen(false)}>ĐĂNG KÝ NGAY</a>
+              <a className="mobile-nav-link text-2xl font-serif text-text-deep" href="#quy-trinh" onClick={() => setMobileMenuOpen(false)}>{t.header.process}</a>
+              <a className="mobile-nav-link text-2xl font-serif text-text-deep" href="#chuyen-gia" onClick={() => setMobileMenuOpen(false)}>{t.header.experts}</a>
+              <a className="mobile-nav-link text-2xl font-serif text-text-deep" href="#so-sanh" onClick={() => setMobileMenuOpen(false)}>{t.header.difference}</a>
+              
+              {/* Language Switcher inside Mobile Drawer */}
+              <button 
+                onClick={() => {
+                  toggleLang();
+                  setMobileMenuOpen(false);
+                }}
+                className="flex items-center justify-between w-full px-4 py-3 rounded-xl border border-outline-variant/30 text-lg font-serif text-text-deep bg-surface-warm/40"
+              >
+                <span className="flex items-center gap-3">
+                  <Languages className="w-5 h-5 text-emotional-accent" />
+                  {lang === "vi" ? "English version" : "Phiên bản tiếng Việt"}
+                </span>
+                <span className="text-sm font-semibold font-sans bg-white px-2.5 py-1 rounded-full text-emotional-accent border border-outline-variant/20">
+                  {lang === "vi" ? "EN" : "VI"}
+                </span>
+              </button>
+
+              <a className="mobile-nav-link vibrant-btn w-full py-4 text-center rounded-lg mt-4 text-[14px] tracking-widest" href="https://toitoanven.fillout.com/assessment" target="_blank" rel="noopener noreferrer">{t.header.registerNow}</a>
             </nav>
           </div>
         )}
       </header>
 
       <main className="mt-[72px]">
-        {/* Hero Section */}
-        <section className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-6 py-16 md:py-24 transition-all duration-1000 opacity-100 translate-y-0">
-          <div className="max-w-4xl mx-auto space-y-8">
-            <p className="font-sans text-xs md:text-sm text-secondary uppercase tracking-[0.2em] font-semibold">
-              DÀNH CHO NHỮNG AI ĐANG TRÊN BỜ VỰC TAN VỠ CỦA HÔN NHÂN
-            </p>
-            <h1 className="font-serif text-3xl md:text-5xl lg:text-6xl text-text-deep leading-tight font-bold">
-              Trước khi dành thêm tình cảm, thời gian và sức lực cho cuộc hôn nhân này,<br />
-              hay trước khi quyết định buông tay,<br />
-              <span className="text-emotional-accent">bạn xứng đáng có sự rõ ràng.</span>
+        {/* Hero Section with Beautiful Background Image Overlay */}
+        <section 
+          className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-6 py-16 md:py-24"
+          style={{
+            backgroundImage: `linear-gradient(rgba(43, 1, 90, 0.75), rgba(43, 1, 90, 0.75)), url("https://lh3.googleusercontent.com/aida/AP1WRLv2fhar43AtCxst6V4D3GqD5C2S4Iu7-mxAucOe4CZVk56fKHAGxJrwmcWXbhVHCpwrjc3H6BRd1E8qJc2nJtil8ycTk35-vbsfE4-XH1IrcGjl7YMdW3Jv_r4SprY1ESaYViAfBy0Vkkb651oCLH0ay3wHs7PoDfa6Dx5jnCgTZQxG569TJntDoSpFMZmw89X-I0dTbQ5e7dF2jwagK5IFsQJeq0r8UKZA8uWydq44-6inQQK1Nmmx7A0")`,
+            backgroundSize: "cover",
+            backgroundPosition: "center center"
+          }}
+        >
+          <div className="max-w-4xl mx-auto space-y-8 relative z-10 text-white flex flex-col items-center">
+            <span className="font-sans text-xs md:text-sm text-on-secondary-container bg-secondary-container px-4 py-2 rounded-full inline-block font-semibold uppercase tracking-wider">
+              {t.hero.subtitle}
+            </span>
+            <h1 className="font-serif text-3xl md:text-5xl lg:text-6xl text-white leading-tight font-bold">
+              {t.hero.titleFirstLine} <br className="hidden md:inline" />
+              {t.hero.titleSecondLine} <br className="hidden md:inline" />
+              <span className="text-emotional-accent font-serif">{t.hero.titleAccent}</span>
             </h1>
-            <p className="font-sans text-base md:text-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
-              Bạn cần một đánh giá trung thực để bạn nhìn thấy sự thật và liệu có một con đường nào khả thi phía trước hay không. <br />
-              Dành cho những ai thực sự nghiêm túc trong việc tìm ra sự thật, ngay cả khi sự thật đó không dễ để đón nhận.
+            <p className="font-sans text-base md:text-lg text-white/95 max-w-2xl mx-auto leading-relaxed mt-4">
+              {t.hero.descriptionLine1} <br />
+              {t.hero.descriptionLine2}
             </p>
-            <div className="pt-4">
-              <a className="vibrant-btn px-8 py-4 rounded-full inline-block text-sm" href="#dang-ky">
-                ĐĂNG KÝ ĐÁNH GIÁ HÔN NHÂN
+            <div className="pt-6">
+              <a className="vibrant-btn px-8 py-4 rounded-full inline-block text-sm" href="https://toitoanven.fillout.com/assessment" target="_blank" rel="noopener noreferrer">
+                {t.hero.button}
               </a>
             </div>
           </div>
         </section>
 
         {/* Pain Points */}
-        <section className="bg-surface-warm px-6 py-20 transition-all duration-1000 opacity-100 translate-y-0 border-y border-outline-variant/10">
+        <section className="bg-surface-warm px-6 py-20 border-y border-outline-variant/10">
           <div className="max-w-[1140px] mx-auto text-center">
-            <h2 className="font-serif text-3xl md:text-4xl text-primary mb-12 font-bold">Có phải bạn đang...</h2>
+            <h2 className="font-serif text-3xl md:text-4xl text-primary mb-12 font-bold">{t.painPoints.heading}</h2>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div className="ambient-card p-8 flex flex-col items-center text-center space-y-4">
-                <HelpCircle className="w-10 h-10 text-emotional-accent" />
-                <p className="font-sans text-base md:text-lg text-text-deep font-semibold">...Hoang mang tự hỏi liệu cuộc hôn nhân này có thực sự đã đi đến hồi kết?</p>
-                <p className="font-sans text-xs md:text-sm text-on-surface-variant leading-relaxed">
-                  Liệu mối quan hệ này còn cứu vãn được không? Hay bạn đang cố bấu víu vào một điều không còn thuộc về mình. <br />Hai người chỉ tạm lạc hướng, hay đây thực sự là kết thúc?
-                </p>
-              </div>
-              <div className="ambient-card p-8 flex flex-col items-center text-center space-y-4">
-                <User className="w-10 h-10 text-emotional-accent" />
-                <p className="font-sans text-base md:text-lg text-text-deep font-semibold">...Cảm thấy mình đơn độc trong nỗ lực cứu vãn hôn nhân?</p>
-                <p className="font-sans text-xs md:text-sm text-on-surface-variant leading-relaxed">
-                  Bạn cảm thấy mình là người duy nhất nỗ lực để kết nối và hàn gắn bằng nhiều cách trong khi người kia đã âm thầm buông xuôi. Bạn hoang mang không biết mình đang nỗ lực vì điều gì.
-                </p>
-              </div>
-              <div className="ambient-card p-8 flex flex-col items-center text-center space-y-4">
-                <Heart className="w-10 h-10 text-emotional-accent" />
-                <p className="font-sans text-base md:text-lg text-text-deep font-semibold">...Lo sợ con cái bị tổn thương nếu cha mẹ chia tay?</p>
-                <p className="font-sans text-xs md:text-sm text-on-surface-variant leading-relaxed">
-                  Bạn sợ con mình bị tổn thương và thiệt thòi khi cha mẹ ly hôn, nhưng cũng thấy được rằng hạnh phúc của con bị bào mòn bởi sự lạnh nhạt và tranh cãi.
-                </p>
-              </div>
-              <div className="ambient-card p-8 flex flex-col items-center text-center space-y-4">
-                <Users className="w-10 h-10 text-emotional-accent" />
-                <p className="font-sans text-base md:text-lg text-text-deep font-semibold">...Gánh chịu áp lực nặng nề từ thể diện và hai bên gia đình?</p>
-                <p className="font-sans text-xs md:text-sm text-on-surface-variant leading-relaxed">
-                  Những câu hỏi "Ly hôn rồi biết ăn nói sao với bố mẹ, họ hàng?"... đè nặng lên bạn. Trong văn hóa Á Đông, hình ảnh một gia đình hạnh phúc gắn liền với thể diện, khiến quyết định đi hay ở trở nên thêm nặng nề.
-                </p>
-              </div>
+              {t.painPoints.cards.map((card, idx) => {
+                let icon = <HelpCircle className="w-10 h-10 text-emotional-accent" />;
+                if (idx === 1) icon = <HeartCrack className="w-10 h-10 text-emotional-accent" />;
+                if (idx === 2) icon = <FamilyIcon className="w-10 h-10 text-emotional-accent" />;
+                if (idx === 3) icon = <Users className="w-10 h-10 text-emotional-accent" />;
+                
+                return (
+                  <div key={idx} className="bg-white p-8 rounded-xl flex flex-col items-center text-center space-y-4 shadow-sm border border-outline-variant/10 hover:shadow-md transition-shadow">
+                    <div className="h-12 flex items-center justify-center">
+                      {icon}
+                    </div>
+                    <p className="font-sans text-base md:text-lg text-text-deep font-semibold">{card.title}</p>
+                    <p className="font-sans text-xs md:text-sm text-on-surface-variant leading-relaxed">
+                      {card.desc}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -160,65 +230,44 @@ export default function App() {
         <section className="px-6 py-20 overflow-hidden bg-background">
           <div className="max-w-[1140px] mx-auto flex flex-col md:flex-row items-center gap-12">
             <div className="flex-1 space-y-6 text-left">
-              <h2 className="font-serif text-3xl md:text-4xl text-text-deep font-bold">"Đánh Giá Hôn Nhân" - Nhìn Thấu Sự Thật Về Mối Quan Hệ Của Bạn</h2>
+              <h2 className="font-serif text-3xl md:text-4xl text-text-deep font-bold">{t.valueProp.title}</h2>
               <p className="font-sans text-base md:text-lg text-on-surface-variant leading-relaxed">
-                Không phải trị liệu tâm lý hay những buổi nói chuyện kéo dài không hồi kết. Đây là <strong>03 buổi đánh giá</strong> với quy trình tập trung giúp bạn trả lời một câu hỏi duy nhất: <strong>Liệu cuộc hôn nhân này còn có thể cứu vãn, hay bạn đang cố giữ lấy một điều không còn thuộc về mình?</strong>
+                {t.valueProp.desc1} <strong>{t.valueProp.desc2}</strong>
               </p>
               <div className="flex items-start gap-4 p-5 bg-primary-fixed/20 rounded-lg">
                 <Award className="w-6 h-6 text-primary shrink-0 mt-0.5" />
                 <p className="font-sans text-sm md:text-base text-primary font-medium italic leading-relaxed">
-                  Chúng tôi tin rằng bạn không cần thêm lời khuyên xoa dịu — bạn cần sự rõ ràng. Một đánh giá trung thực về việc hôn nhân đang ở đâu, điều gì thực sự xảy ra, và con đường khả thi nào phía trước dành cho bạn.
+                  {t.valueProp.note}
                 </p>
               </div>
             </div>
             <div className="flex-1 w-full relative">
-              <div className="aspect-square bg-gradient-to-br from-secondary-container to-primary rounded-3xl overflow-hidden shadow-2xl rotate-3">
+              <div className="aspect-square rounded-3xl overflow-hidden shadow-xl">
                 <img 
-                  className="w-full h-full object-cover mix-blend-overlay opacity-80" 
-                  alt="Sự thấu hiểu và gắn kết"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv5jaKnidY58l-B8eLqycX6wpux0zzfKXkVy_GljzQo91rPfVPcsx8gyG9VSbVDJDL2GOy3S30HtXCwTSK569U19KQzLpvba2OGBZrdOYw9wiALsrmC_g790U-69tQZK9Ql27MrcbsIceP9GwuFxfKvGZMPbw-2okdd4vSWR0rMcMCwVYajtmoPqzQyoAyw-VRa83DP6yhciq4Ro_UWVzbhH_UEB-oowa4glAKTrVZ044KWiv6-0VZiprQ1c86d5ZKNMl8wckScMA"
+                  className="w-full h-full object-cover" 
+                  alt={t.valueProp.imageAlt}
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIQ6p0mUNLaWrW3N7xDzZ7_97kRoN7yvvEYkrD2_i2eNeoFsFECCQ9eXwGp--eUK4EqJzsrMLVnrTM4iZw33-d-BSNOpWDtMqqcRC8BcW8xkQ_FUq-KHtppI4tgaBWR6DRFrj4vzX4U5FDwCzlD-p5YuW_YyDoCbt5eA5-PVGXqkqHDFC0PyCB4feJdDfP-8I8Y5oUWtHGqDwO6zk8WcrNUh5bvqlXP4RhQjEGeAz9gPu1cQ0M-2CD1zE0tOuKpzRDZdAIsiRZQw8"
                   referrerPolicy="no-referrer"
                 />
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Heart className="w-16 h-16 text-white opacity-40" />
               </div>
             </div>
           </div>
         </section>
 
         {/* Results */}
-        <section className="bg-primary text-on-primary px-6 py-20">
+        <section className="bg-primary-container text-on-primary px-6 py-20">
           <div className="max-w-[1140px] mx-auto">
             <div className="text-center mb-12">
-              <h2 className="font-serif text-3xl md:text-4xl font-bold">Sau Buổi Đánh Giá, Bạn Sẽ Biết Được:</h2>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-white">{t.results.heading}</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-              <div className="p-6 border border-on-primary/10 rounded-xl hover:bg-on-primary/5 transition-colors text-left">
-                <span className="font-sans font-bold text-action-vibrant text-lg mb-2 block">01</span>
-                <h4 className="font-sans font-bold text-sm md:text-base mb-2">Hôn Nhân Có Còn Cứu Được Không?</h4>
-                <p className="text-xs text-on-primary/85 leading-relaxed">Nhận kết luận chuyên môn, trung thực về khả năng hàn gắn thực tế của mối quan hệ.</p>
-              </div>
-              <div className="p-6 border border-on-primary/10 rounded-xl hover:bg-on-primary/5 transition-colors text-left">
-                <span className="font-sans font-bold text-action-vibrant text-lg mb-2 block">02</span>
-                <h4 className="font-sans font-bold text-sm md:text-base mb-2">Nguyên Nhân Thực Sự Đang Phá Vỡ Hôn Nhân</h4>
-                <p className="text-xs text-on-primary/85 leading-relaxed">Nhìn rõ những khuôn mẫu hành vi, oán giận âm ỉ và động lực ngầm đang đẩy hai người ra xa.</p>
-              </div>
-              <div className="p-6 border border-on-primary/10 rounded-xl hover:bg-on-primary/5 transition-colors text-left">
-                <span className="font-sans font-bold text-action-vibrant text-lg mb-2 block">03</span>
-                <h4 className="font-sans font-bold text-sm md:text-base mb-2">Lộ Trình Cụ Thể Để Hàn Gắn</h4>
-                <p className="text-xs text-on-primary/85 leading-relaxed">Nếu còn cứu vãn được, bạn sẽ biết rõ điều gì cần thay đổi, trách nhiệm cụ thể của mỗi người và các trở ngại cần vượt qua.</p>
-              </div>
-              <div className="p-6 border border-on-primary/10 rounded-xl hover:bg-on-primary/5 transition-colors text-left">
-                <span className="font-sans font-bold text-action-vibrant text-lg mb-2 block">04</span>
-                <h4 className="font-sans font-bold text-sm md:text-base mb-2">Tác Động Thực Tế Lên Con Cái</h4>
-                <p className="text-xs text-on-primary/85 leading-relaxed">Thấy rõ cuộc hôn nhân hiện tại đang thực sự ảnh hưởng như thế nào đến tâm lý và tinh thần của con bạn.</p>
-              </div>
-              <div className="p-6 border border-on-primary/10 rounded-xl hover:bg-on-primary/5 transition-colors text-left">
-                <span className="font-sans font-bold text-action-vibrant text-lg mb-2 block">05</span>
-                <h4 className="font-sans font-bold text-sm md:text-base mb-2">Đề Xuất Con Đường Phù Hợp Nhất</h4>
-                <p className="text-xs text-on-primary/85 leading-relaxed">Nhận đề xuất lộ trình rõ ràng (hàn gắn, trị liệu bài bản, phát triển bản thân, hoặc chia tay lành mạnh) để bạn rời đi với sự rõ ràng tuyệt đối thay vì đoán mò.</p>
-              </div>
+              {t.results.cards.map((card, idx) => (
+                <div key={idx} className="p-6 border rounded-xl transition-colors border-outline-variant/30 hover:bg-white/10 text-left">
+                  <span className="font-sans font-bold text-action-vibrant text-lg mb-2 block">{card.num}</span>
+                  <h4 className="font-sans font-bold text-sm md:text-base text-white mb-2">{card.title}</h4>
+                  <p className="text-xs text-white/85 leading-relaxed">{card.desc}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -226,23 +275,21 @@ export default function App() {
         {/* Process */}
         <section className="px-6 py-20 bg-background" id="quy-trinh">
           <div className="max-w-2xl mx-auto text-left">
-            <h2 className="font-serif text-3xl md:text-4xl text-center text-text-deep mb-12 font-bold">Lộ trình 3 buổi chuyên sâu</h2>
+            <h2 className="font-serif text-3xl md:text-4xl text-center text-text-deep mb-12 font-bold">{t.process.heading}</h2>
             <div className="space-y-12 relative before:absolute before:left-8 before:top-4 before:bottom-4 before:w-0.5 before:bg-outline-variant">
-              <div className="relative pl-16 flex flex-col space-y-2">
-                <div className="absolute left-8 w-4 h-4 rounded-full bg-emotional-accent -translate-x-1/2"></div>
-                <h4 className="font-serif text-lg md:text-xl font-bold text-text-deep">Buổi 1: Gặp riêng người bạn đời thứ nhất</h4>
-                <p className="font-sans text-sm md:text-base text-on-surface-variant leading-relaxed">Lắng nghe góc nhìn cá nhân, những tổn thương và kỳ vọng thầm kín.</p>
-              </div>
-              <div className="relative pl-16 flex flex-col space-y-2">
-                <div className="absolute left-8 w-4 h-4 rounded-full bg-secondary -translate-x-1/2"></div>
-                <h4 className="font-serif text-lg md:text-xl font-bold text-text-deep">Buổi 2: Gặp riêng người bạn đời thứ hai</h4>
-                <p className="font-sans text-sm md:text-base text-on-surface-variant leading-relaxed">Hoàn thiện bức tranh đa chiều từ phía đối phương, đảm bảo tính khách quan tuyệt đối.</p>
-              </div>
-              <div className="relative pl-16 flex flex-col space-y-2">
-                <div className="absolute left-8 w-4 h-4 rounded-full bg-primary -translate-x-1/2"></div>
-                <h4 className="font-serif text-lg md:text-xl font-bold text-text-deep">Buổi 3: Buổi họp chung đúc kết</h4>
-                <p className="font-sans text-sm md:text-base text-on-surface-variant leading-relaxed">Phân tích các chỉ số hôn nhân và đưa ra khuyến nghị chuyên môn</p>
-              </div>
+              {t.process.steps.map((step, idx) => {
+                let bgColor = "bg-[#ffb74d]";
+                if (idx === 1) bgColor = "bg-[#fb8c00]";
+                if (idx === 2) bgColor = "bg-[#e65100]";
+                
+                return (
+                  <div key={idx} className="relative pl-16 flex flex-col space-y-2">
+                    <div className={`absolute left-8 w-4 h-4 rounded-full ${bgColor} -translate-x-1/2`}></div>
+                    <h4 className="font-serif text-lg md:text-xl font-bold text-text-deep">{step.title}</h4>
+                    <p className="font-sans text-sm md:text-base text-on-surface-variant leading-relaxed">{step.desc}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -250,47 +297,51 @@ export default function App() {
         {/* Comparison Table */}
         <section className="bg-surface-container-low px-6 py-20" id="so-sanh">
           <div className="max-w-[1140px] mx-auto text-center">
-            <h2 className="font-serif text-3xl md:text-4xl text-text-deep mb-4 font-bold">Chọn đúng chuyên gia Hôn nhân của bạn!</h2>
-            <p className="font-sans text-sm md:text-base text-on-surface-variant mb-12 italic max-w-3xl mx-auto leading-relaxed">
-              Lựa chọn ít tốn kém nhất không phải là lựa chọn có giá từng buổi thấp nhất, mà là lựa chọn giúp giải quyết vấn đề hiệu quả nhất với tổn thất thấp nhất cho cuộc sống của bạn.
-            </p>
+            <h2 className="font-serif text-3xl md:text-4xl text-text-deep mb-6 font-bold">{t.comparison.heading}</h2>
+            
+            <div className="font-sans text-sm md:text-base text-on-surface-variant mb-12 max-w-3xl mx-auto leading-relaxed space-y-4">
+              {t.comparison.subheading.split("\n\n").map((para, i) => (
+                <p key={i} className={para.startsWith('"') ? "font-semibold text-text-deep italic" : ""}>
+                  {para}
+                </p>
+              ))}
+            </div>
+
             <div className="overflow-x-auto rounded-xl shadow-lg border border-outline-variant/20">
               <table className="w-full border-collapse bg-white">
                 <thead>
                   <tr className="bg-primary text-white">
-                    <th className="p-4 md:p-5 text-left font-sans text-xs md:text-sm font-semibold uppercase tracking-wider">Tiêu chí so sánh</th>
-                    <th className="p-4 md:p-5 text-center font-sans text-xs md:text-sm font-semibold uppercase tracking-wider bg-primary/95">Lộ trình tại Toàn Vẹn</th>
-                    <th className="p-4 md:p-5 text-center font-sans text-xs md:text-sm font-semibold uppercase tracking-wider opacity-80">Khai vấn thông thường</th>
+                    <th className="p-4 md:p-6 text-left font-sans text-xs md:text-sm font-semibold uppercase tracking-wider">{t.comparison.colCriteria}</th>
+                    <th className="p-4 md:p-6 text-center font-sans text-xs md:text-sm font-semibold uppercase tracking-wider bg-primary/95">{t.comparison.colToanVen}</th>
+                    <th className="p-4 md:p-6 text-center font-sans text-xs md:text-sm font-semibold uppercase tracking-wider opacity-80">{t.comparison.colNormal}</th>
                   </tr>
                 </thead>
                 <tbody className="text-xs md:text-sm text-on-surface text-left">
-                  <tr className="border-b border-outline-variant/20 hover:bg-surface-warm/20 transition-colors">
-                    <td className="p-4 md:p-5 font-bold text-text-deep">Giá mỗi buổi</td>
-                    <td className="p-4 md:p-5 text-center text-secondary font-bold bg-surface-warm/40">Khoảng 3,3 triệu VNĐ</td>
-                    <td className="p-4 md:p-5 text-center opacity-60 font-medium">Thường 1 - 2 triệu VNĐ</td>
-                  </tr>
-                  <tr className="border-b border-outline-variant/20 hover:bg-surface-warm/20 transition-colors">
-                    <td className="p-4 md:p-5 font-bold text-text-deep">Số lượng buổi</td>
-                    <td className="p-4 md:p-5 text-center text-secondary font-bold bg-surface-warm/40">Gói gọn trong 3 buổi chuyên sâu</td>
-                    <td className="p-4 md:p-5 text-center opacity-60 font-medium">Không cố định, có thể kéo dài liên tục</td>
-                  </tr>
-                  <tr className="border-b border-outline-variant/20 hover:bg-surface-warm/20 transition-colors">
-                    <td className="p-4 md:p-5 font-bold text-text-deep">Tổng chi phí đầu vào</td>
-                    <td className="p-4 md:p-5 text-center text-secondary font-bold bg-surface-warm/40">Biết trước rõ ràng: 10 triệu VNĐ</td>
-                    <td className="p-4 md:p-5 text-center opacity-60 font-medium">Chưa biết trước (phụ thuộc buổi phát sinh)</td>
-                  </tr>
-                  <tr className="border-b border-outline-variant/20 hover:bg-surface-warm/20 transition-colors">
-                    <td className="p-4 md:p-5 font-bold text-text-deep">Thời gian đạt sự rõ ràng</td>
-                    <td className="p-4 md:p-5 text-center text-secondary font-bold bg-surface-warm/40">Cam kết có câu trả lời sau 3 buổi</td>
-                    <td className="p-4 md:p-5 text-center opacity-60 font-medium">Phụ thuộc từng trường hợp</td>
-                  </tr>
-                  <tr className="hover:bg-surface-warm/20 transition-colors">
-                    <td className="p-4 md:p-5 font-bold text-text-deep">Thời gian cam kết</td>
-                    <td className="p-4 md:p-5 text-center text-secondary font-bold bg-surface-warm/40">Hoàn thành trong khoảng 1 tuần</td>
-                    <td className="p-4 md:p-5 text-center opacity-60 font-medium">Kéo dài nhiều tuần hoặc nhiều tháng</td>
-                  </tr>
+                  {t.comparison.rows.map((row, idx) => (
+                    <tr 
+                      key={idx} 
+                      className={`border-b border-outline-variant/20 hover:bg-surface-warm/20 transition-colors ${idx % 2 === 1 ? "bg-surface-container-lowest" : ""} ${idx === t.comparison.rows.length - 1 ? "border-b-0" : ""}`}
+                    >
+                      <td className="p-6 font-bold text-text-deep align-top">{row.criteria}</td>
+                      <td className="p-6 text-[#b6086d] font-bold align-top">
+                        {row.toanVen.split("\n").map((line, i) => (
+                          <div key={i} className={line.startsWith("•") ? "pl-2" : ""}>{line}</div>
+                        ))}
+                      </td>
+                      <td className="p-6 text-on-surface-variant font-medium align-top">
+                        {row.normal.split("\n").map((line, i) => (
+                          <div key={i}>{line}</div>
+                        ))}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Bottom note of comparison */}
+            <div className="mt-8 text-left bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/10 text-on-surface-variant text-xs md:text-sm leading-relaxed max-w-4xl mx-auto">
+              <p className="italic">{t.comparison.postNote}</p>
             </div>
           </div>
         </section>
@@ -298,24 +349,24 @@ export default function App() {
         {/* Experts */}
         <section className="px-6 py-20 bg-background" id="chuyen-gia">
           <div className="max-w-[1140px] mx-auto text-center">
-            <h2 className="font-serif text-3xl md:text-4xl text-text-deep mb-12 font-bold">Đội Ngũ Chuyên Gia Đồng Hành Cùng Bạn</h2>
+            <h2 className="font-serif text-3xl md:text-4xl text-text-deep mb-12 font-bold">{t.experts.heading}</h2>
             <div className="grid gap-12 grid-cols-1">
               
               {/* Expert 1 */}
               <div className="ambient-card rounded-[40px] overflow-hidden flex flex-col md:flex-row items-center w-full">
                 <img 
-                  alt="Chị Mai Khôi" 
+                  alt={t.experts.expert1.name} 
                   className="w-full md:w-1/2 h-[350px] md:h-[500px] object-cover" 
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVknrIL5RgHItR__JVj0qy4r0kXpxavwBm8WybMfJ-ZNleLziOo1HN7kfMWuGMiGaeB7YoXxDU7Bnn9-Jj42N64z7BP5AWk2j4UuCyQ1HewkW3H_zN6FHSEQPmPcX9wBjkQPmORdkX_A4rvoKYEsWaTI9F7F_lZhf_6eAMsroK-Ns7nFrhZt-6Ei2EzyoEcTB_qTl33XGAZIBAbJuFpfSdTFnKgOx159iMmTPmMY-atDAEjZ3DC2Vnzt7olo0OW-aZqsc17KIjWmI"
                   referrerPolicy="no-referrer"
                 />
                 <div className="p-8 md:p-10 md:w-1/2 text-left space-y-4">
-                  <h3 className="font-serif text-2xl md:text-3xl text-primary font-bold">Chị Mai Khôi</h3>
+                  <h3 className="font-serif text-2xl md:text-3xl text-primary font-bold">{t.experts.expert1.name}</h3>
                   <span className="text-emotional-accent font-bold uppercase tracking-tighter text-xs block leading-relaxed">
-                    Chuyên gia Khai Vấn quốc tế với 30 năm kinh nghiệm &amp; Tác Giả Sách về Hôn Nhân &amp; Mối Quan Hệ.
+                    {t.experts.expert1.title}
                   </span>
                   <p className="text-on-surface-variant text-sm md:text-base leading-relaxed">
-                    Chị Mai Khôi có gần 30 năm kinh nghiệm tham tham vấn tại Mỹ và nhiều quốc gia. Chị là người phụ nữ châu Á đầu tiên đạt chứng chỉ Certified Professional Co-Active Coach (CPCC) tại Mỹ, và là Trainer đã đào tạo hơn 2.000 coach toàn cầu. Chị là tác giả của 2 cuốn sách xuất bản tại Mỹ và cuốn 'Người Phụ Nữ Toàn Vẹn' tại Việt Nam. Trải nghiệm thấu cảm lớn nhất của chị đến từ việc chính mình đi qua hai lần ly hôn lành mạnh, giúp chị nhận ra kết thúc không phải thất bại mà là một hành trình trọn vẹn theo cách riêng. Chị đồng hành giúp khách hàng tìm lại sự thật và nền tảng của riêng họ thay vì đi theo một khuôn mẫu có sẵn.
+                    {t.experts.expert1.bio}
                   </p>
                 </div>
               </div>
@@ -323,19 +374,19 @@ export default function App() {
               {/* Expert 2 */}
               <div className="ambient-card rounded-[40px] overflow-hidden flex flex-col md:flex-row items-center w-full">
                 <img 
-                  alt="Chị Minh Ngọc" 
+                  alt={t.experts.expert2.name} 
                   className="w-full md:w-1/2 h-[350px] md:h-[500px] object-cover" 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAc7CExDgGUVGXFBXwKRkCbalgxuUlxeyggGbp32hONyomF8gcgoVtAZ_ITgPhstyqaL98gDCm_6FW9rO0jTB0QvAZMfSy8wlOuQBuilmmBW5xHL8KO9HnFkM5931VbDYcJt0vSCdV2BtF3lj-4v1raGrXlmouFvj8QV1gCKN8X1mvbgzFJwj6jMMx2AK7yEVFcPw36bhJBAlrXw0EJzuOGCO9g2i3gXI4-MTi-zNhXFv-tHhhBK1IUvPSUeobQd9HARki-3G1K-nU" 
-                  style={{ objectPosition: "center 10%" }}
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGJi1fOdA243IZ5Sh9AHMLt4pzQFP2nVhs2bpYIdbln8s2IMP7Noh_P9ECrLBc4y_RQJT75PGuWHoVNjuoQDSrhtWTXbszMzZ99pIt2Oj0IEasHWM6P_kjqVJLBcXfs2Nkkz69wxWEwgm2prOg4yiz1Px37o3CEEwuDzr9Mu-Hvo2v3Tbr2htOmdsvzqBsp-FTPtf4PRzYbcqwt7msZnIAI1Q60D-CtWkQ-rXsRQPUkIr79oRhlI0SKuL1GnaxZvRdXuoq3e1gvw2yeg" 
+                  style={{ objectPosition: "center 80%" }}
                   referrerPolicy="no-referrer"
                 />
                 <div className="p-8 md:p-10 md:w-1/2 text-left space-y-4">
-                  <h3 className="font-serif text-2xl md:text-3xl text-primary font-bold">Chị Minh Ngọc</h3>
+                  <h3 className="font-serif text-2xl md:text-3xl text-primary font-bold">{t.experts.expert2.name}</h3>
                   <span className="text-emotional-accent font-bold uppercase tracking-tighter text-xs block leading-relaxed">
-                    Chuyên gia Khai vấn về Mối quan hệ và Tình dục - Certified Relationship &amp; Sex Coach (ICF PCC)
+                    {t.experts.expert2.title}
                   </span>
                   <p className="text-on-surface-variant text-sm md:text-base leading-relaxed">
-                    Chị Minh Ngọc thấu hiểu sâu sắc nỗi đau từ chính hành trình dùng coaching tự cứu mình qua chuỗi biến cố dồn dập (sinh con, mất mẹ, dịch bệnh, kinh doanh đổ vỡ) khi đang cố gánh vác mọi thứ bên ngoài trong khi bên trong đã rạn nứt. Chị không đi lên từ lý thuyết sách vở mà từ trải nghiệm thực tế của người đứng giữa lanh giới giữ và buông. Là Certified Relationship &amp; Sex Coach, chị đồng hành cùng các cặp đôi tháo gỡ những nút thắt khó nói nhất: sự lạnh nhạt chăn gối và mất kết nối thân mật kéo dài nhiều năm.
+                    {t.experts.expert2.bio}
                   </p>
                 </div>
               </div>
@@ -348,44 +399,16 @@ export default function App() {
         <section className="bg-surface-warm px-6 py-20">
           <div className="max-w-[800px] mx-auto text-center space-y-10">
             <div className="space-y-4">
-              <h2 className="font-serif text-3xl md:text-5xl text-primary font-bold">Sẵn sàng để tìm lại sự rõ ràng?</h2>
-              <p className="font-sans text-base md:text-lg text-on-surface-variant">Một lộ trình toàn diện cho cuộc hôn nhân của bạn</p>
+              <h2 className="font-serif text-3xl md:text-5xl text-primary font-bold">{t.pricing.heading}</h2>
+              <p className="font-sans text-base md:text-lg text-on-surface-variant">{t.pricing.subheading}</p>
             </div>
             <div className="bg-white p-8 md:p-12 rounded-[40px] shadow-2xl border-4 border-action-vibrant/20 relative overflow-hidden text-center">
               <div className="absolute top-0 left-0 w-full h-2 pricing-border-gradient"></div>
-              <div className="text-secondary font-bold uppercase tracking-widest text-xs mb-4">GIỚI HẠN 5 CẶP ĐÔI/THÁNG</div>
-              <div className="text-4xl md:text-6xl font-bold text-primary mb-2">10.000.000 <span className="text-xl md:text-2xl font-normal text-on-surface-variant">VNĐ</span></div>
-              <p className="text-on-surface-variant font-medium mb-10 text-sm md:text-base">Đã bao gồm VAT cho lộ trình 3 buổi chuyên sâu</p>
-              <a className="inline-block w-full vibrant-btn text-white py-5 rounded-full text-xs tracking-[0.2em] font-bold text-center" href="#dang-ky">ĐĂNG KÝ ĐÁNH GIÁ HÔN NHÂN</a>
-              <p className="mt-6 text-xs text-on-surface-variant italic leading-relaxed">Vì tính chất chuyên sâu và bảo mật, chúng tôi chỉ nhận đồng hành cùng một số lượng rất nhỏ khách hàng mỗi tháng để đảm bảo chất lượng cao nhất.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Registration Form Section */}
-        <section className="py-20 px-6 bg-surface-container-low" id="dang-ky">
-          <div className="max-w-[1140px] mx-auto text-center">
-            <h2 className="font-serif text-3xl md:text-4xl text-primary mb-4 font-bold">Bắt đầu hành trình của bạn</h2>
-            <p className="text-on-surface-variant font-sans text-sm md:text-base mb-12">Vui lòng điền thông tin bên dưới để chúng tôi liên hệ tư vấn sơ bộ.</p>
-            
-            <div className="bg-white rounded-[40px] p-1 h-auto overflow-hidden shadow-sm border border-outline-variant/30">
-              <div className="w-full h-full flex flex-col items-center justify-center text-center p-8 md:p-12 border-4 border-dashed border-outline-variant/20 rounded-[38px] bg-surface-bright/50">
-                <Mail className="w-12 h-12 text-outline-variant/80 mb-6" />
-                <h3 className="font-serif text-xl md:text-2xl text-primary mb-4 font-bold">Form Đăng Ký Đánh Giá</h3>
-                <p className="text-on-surface-variant max-w-md mb-10 text-sm md:text-base leading-relaxed">
-                  Điền thông tin để nhận tư vấn sơ bộ: Họ tên, Số điện thoại Zalo. Chuyên gia sẽ liên hệ với bạn trong vòng 24h.
-                </p>
-                
-                <div className="w-full max-w-lg mx-auto overflow-hidden rounded-xl border border-outline-variant/20 bg-white">
-                  <div 
-                    style={{ width: "100%", height: "500px" }} 
-                    data-fillout-id="ku9R4TXMHYus" 
-                    data-fillout-embed-type="standard" 
-                    data-fillout-inherit-parameters="" 
-                    data-fillout-dynamic-resize=""
-                  ></div>
-                </div>
-              </div>
+              <div className="text-secondary font-bold uppercase tracking-widest text-xs mb-4">{t.pricing.badge}</div>
+              <div className="text-4xl md:text-6xl font-bold text-primary mb-2">{t.pricing.price} <span className="text-xl md:text-2xl font-normal text-on-surface-variant">{t.pricing.priceUnit}</span></div>
+              <p className="text-on-surface-variant font-medium mb-10 text-sm md:text-base">{t.pricing.vatLabel}</p>
+              <a className="inline-block w-full vibrant-btn text-white py-5 rounded-full text-xs tracking-[0.2em] font-bold text-center" href="https://toitoanven.fillout.com/assessment" target="_blank" rel="noopener noreferrer">{t.pricing.button}</a>
+              <p className="mt-6 text-xs text-on-surface-variant italic leading-relaxed">{t.pricing.note}</p>
             </div>
           </div>
         </section>
@@ -395,16 +418,23 @@ export default function App() {
       <footer className="bg-surface-container text-on-surface px-6 py-12 border-t border-outline-variant/10">
         <div className="max-w-[1140px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex flex-col items-center md:items-start space-y-4">
-            <div className="flex items-center gap-2">
+            <a className="flex items-center gap-2.5" href="https://toanven.vn" target="_blank" rel="noopener noreferrer">
               <img 
                 alt="Toàn Vẹn Logo" 
-                className="h-8 w-8" 
+                className="h-8 w-8 shrink-0" 
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCU1ebUauadM--pMhIl7rQCCvS3GPqZMwcXlTzgeCKFqtjoRMwVyol_oOl-p9OMkIrQtnvRcKcVNybZZNgakZVHRMNCIJEYOxMIVnIYT4DFEmPV3b_zhFymPEcB26imaXdTYgSDfBcbByv4H7W5qTnAgjFHU6aeruKlFCwMbUTnOsAdOrzhoDMQBKyt8GiqCqwcaVnHFItx7mmGUL9_AqYJQCQ0A1HDrh43X6o4o2-iPICMjIsRPSX5WonQPHMVV2I8vQtYtoB3Xuo" 
                 referrerPolicy="no-referrer"
               />
-              <span className="font-serif text-xl font-bold text-primary">Toàn Vẹn</span>
-            </div>
-            <p className="font-sans text-xs text-on-surface-variant text-center md:text-left">© 2026 Toàn Vẹn International. All rights reserved</p>
+              <div className="flex flex-col text-left leading-tight">
+                <span className="font-sans text-lg md:text-xl text-primary font-bold">
+                  Toàn Vẹn <span className="font-normal">International</span>
+                </span>
+                <span className="font-sans text-[8px] md:text-[9px] text-on-surface-variant/80 tracking-wide">
+                  Save Your Marriage Assessment | Đánh giá Hôn Nhân
+                </span>
+              </div>
+            </a>
+            <p className="font-sans text-xs text-on-surface-variant text-center md:text-left">{t.footer.copyright}</p>
           </div>
           <div className="flex flex-col md:flex-row gap-4 md:gap-8 items-center text-sm">
             <a className="text-on-surface-variant hover:text-emotional-accent transition-colors flex items-center gap-2 font-medium" href="mailto:toanveninstitute@gmail.com">
